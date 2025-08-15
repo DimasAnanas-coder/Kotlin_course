@@ -1,8 +1,11 @@
+import texts
+
 
 def start():
     while True:
-        print()
+        print(texts.start_text)
+        request = input()
+
 
 if __name__ == '__main__':
     start()
-t = 1
