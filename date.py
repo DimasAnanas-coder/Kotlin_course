@@ -1,4 +1,4 @@
-class Time:
+class Date:
     def __init__(self) -> None:
         self.__day_today: int = 1
 
@@ -7,3 +7,6 @@ class Time:
 
     def jump_to_next_day(self) -> None:
         self.__day_today += 1
+
+
+date: Date = Date()
