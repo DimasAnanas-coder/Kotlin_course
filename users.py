@@ -7,7 +7,7 @@ import date
 
 class User:
     __users_list: Dict[int, Any] = dict()
-    __now_select_user: int = -1
+    __now_select_user: int = 0
 
     def __init__(self, user_id: int, email: str, name: str) -> None:
         self.__user_id: int = user_id
@@ -38,16 +38,26 @@ class User:
         return self.__borrow_books
 
     @classmethod
-    def get_select_user(cls):
+    def get_select_user(cls) -> int:
         return cls.__now_select_user
 
     @classmethod
-    def is_email_used(cls, email):
+    def is_email_used(cls, email: str) -> bool:
         users_list = cls.__users_list
         for user_id in users_list:
             if email == users_list[user_id].get_user_info()[1]:
                 return True
         return False
+
+    @classmethod
+    def delete_user(cls, user_id: int) -> None:
+        if cls.__now_select_user == user_id:
+            cls.__now_select_user -= 1
+        del cls.__users_list[user_id]
+
+    @classmethod
+    def choose_active_user(cls, user_id) -> None:
+        cls.__now_select_user = user_id
 
 
 class Student(User):

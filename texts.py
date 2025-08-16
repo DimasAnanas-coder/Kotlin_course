@@ -7,7 +7,7 @@ def main_menu_text():
     
 Choice (0-4):
 1. User management
-2. Library management
+2. Library
 3. Take/get book
 4. Jump to the next day
 0. Exit'''
@@ -20,7 +20,7 @@ choice_exception_text = 'You need choice the one action. Only one digit, please'
 
 def user_menu_text():
     users_list = User.get_users_list()
-    text = 'List of users\n\n'
+    text = 'List of users:\n'
     num = 1
     select_user_id = User.get_select_user()
     for user_id in users_list:
@@ -57,6 +57,8 @@ create_user_step_2_format_exception_text = 'Your name must consist of one word'
 
 create_user_step_3_text = 'Enter your email'
 
+create_user_step_3_space_exception_text = 'Your email must consist of one word'
+
 create_user_step_3_format_exception_text = 'Email need to have the symbol "@"'
 
 create_user_step_3_old_account_exception_text = 'An account with this email has already been created'
@@ -64,3 +66,16 @@ create_user_step_3_old_account_exception_text = 'An account with this email has 
 
 def create_user_step_4_text(user_id):
     return f'You have successful created a new account (ID: {user_id})'
+
+
+delete_user_step_1_text = 'Enter the user ID you want to delete'
+
+delete_user_step_1_no_user_exception_text = 'A user with this ID was not found'
+
+delete_user_step_1_format_exception_text = 'The user ID must be a natural number'
+
+choose_user_step_1_text = 'Enter the user ID you want to delete'
+
+choose_user_step_1_no_user_exception_text = 'A user with this ID was not found'
+
+choose_user_step_1_format_exception_text = 'The user ID must be a natural number'

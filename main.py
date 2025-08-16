@@ -26,7 +26,7 @@ def user_menu_handle():
     choice_next_step = {
         1: create_user_handle,
         2: delete_user_handler,
-        3: ,
+        3: choose_active_user_handle,
         0: main_menu_handle
     }
     choice_next_step[int(request)]()
@@ -43,6 +43,7 @@ def create_user_handle():
         3: Faculty
     }
     user_type = choice_user_type[int(request)]
+
     while True:
         print(create_user_step_2_text)
         name = input()
@@ -50,15 +51,19 @@ def create_user_handle():
             print(create_user_step_2_format_exception_text)
         else:
             break
+
     while True:
         print(create_user_step_3_text)
         email = input()
-        if ' ' in email or '@' not in email:
-            print(create_user_step_2_format_exception_text)
+        if ' ' in email:
+            print(create_user_step_3_space_exception_text)
+        elif '@' not in email:
+            print(create_user_step_3_format_exception_text)
         elif User.is_email_used(email):
             print(create_user_step_3_old_account_exception_text)
         else:
             break
+
     user_id = len(User.get_users_list()) + 1
     user = user_type(user_id, email, name)
     User.add_new_user(user)
@@ -68,6 +73,31 @@ def create_user_handle():
 
 
 def delete_user_handler():
+    while True:
+        print(delete_user_step_1_text)
+        request = input()
+        if not request.isdigit() or int(request) < 1:
+            print(delete_user_step_1_format_exception_text)
+        elif int(request) > len(User.get_users_list()):
+            print(delete_user_step_1_no_user_exception_text)
+        else:
+            break
+    User.delete_user(int(request))
+    user_menu_handle()
+
+
+def choose_active_user_handle():
+    while True:
+        print(choose_user_step_1_text)
+        request = input()
+        if not request.isdigit() or int(request) < 1:
+            print(choose_user_step_1_format_exception_text)
+        elif int(request) > len(User.get_users_list()):
+            print(choose_user_step_1_no_user_exception_text)
+        else:
+            break
+    User.choose_active_user(int(request))
+    user_menu_handle()
 
 
 def library_menu_handle():
