@@ -1,5 +1,4 @@
-import date
-from users import *
+from utils.users import *
 
 
 def main_menu_text():
@@ -8,12 +7,9 @@ def main_menu_text():
 Choice (0-4):
 1. User management
 2. Library
-3. Take/get book
+3. Borrow/return book
 4. Jump to the next day
 0. Exit'''
-
-
-user_not_found_text = 'You can`t take a book from the library, because you didn`t create a user'
 
 choice_exception_text = 'You need choice the one action. Only one digit, please'
 
@@ -23,6 +19,7 @@ def user_menu_text():
     text = 'List of users:\n'
     num = 1
     select_user_id = User.get_select_user()
+    user_type_selected = 'goat'
     for user_id in users_list:
         if isinstance(users_list[user_id], Student):
             user_type = 'student'
@@ -88,3 +85,25 @@ choose_user_step_1_text = 'Enter the user ID you want to delete'
 choose_user_step_1_no_user_exception_text = 'A user with this ID was not found'
 
 choose_user_step_1_format_exception_text = 'The user ID must be a natural number'
+
+user_not_found_text = 'You can`t borrow a book from the library, because you didn`t create a user'
+
+limit_count_books_text = 'You can`t borrow a book from the library, because you have many books'
+
+expired_books_text = 'You can`t borrow a book from the library, because you have expired book'
+
+start_borrow_text = '''Select the books search criteria
+
+Choice (0-3):
+1. ISBN
+2. Name
+3. Author
+0. Back to books management menu'''
+
+send_isbn_text = 'Send the book`s ISBN in format: 978-3-16-148412-0 (13 digits)'
+
+send_name_text = 'Send the book`s name'
+
+send_author_text = 'Send the book`s author'
+
+borrow_book_by_ibsn_exception_text = 'IBSN format is invalid'

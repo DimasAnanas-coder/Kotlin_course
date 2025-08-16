@@ -10,7 +10,7 @@ class User:
         self.__user_id: int = user_id
         self.__email: str = email
         self.__name: str = name
-        self.__borrow_books: List[Tuple[str, int]] = []      # ISBN, day start borrow
+        self.__borrow_books: List[Tuple[str, int]] = []  # ISBN, day start borrow
 
     @classmethod
     def add_new_user(cls, user):
@@ -68,6 +68,9 @@ class User:
             if date.date.get_now_date() - start_borrow_day > user.max_borrow_days:
                 return True
         return False
+
+    def is_limit_of_count_books(self, user):
+        return len(user.get_borrow_books()) == user.max_borrow_books
 
 
 class Student(User):
