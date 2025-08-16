@@ -2,9 +2,6 @@ from typing import *
 import date
 
 
-# users_list: Dict[int, Any] = dict()
-
-
 class User:
     __users_list: Dict[int, Any] = dict()
     __now_select_user: int = 0
@@ -13,7 +10,7 @@ class User:
         self.__user_id: int = user_id
         self.__email: str = email
         self.__name: str = name
-        self.__borrow_books: List[Tuple[str, int]] = []
+        self.__borrow_books: List[Tuple[str, int]] = []      # ISBN, day start borrow
 
     @classmethod
     def add_new_user(cls, user):
@@ -22,6 +19,13 @@ class User:
 
     def borrow_new_book(self, isbn: str) -> None:
         self.__borrow_books.append((isbn, date.date.get_now_date()))
+
+    def return_book(self, isbn: str) -> None:
+        for i in range(len(self.__borrow_books) - 1, -1, -1):
+            (isbn_now_book, day_start) = self.__borrow_books[i]
+            if isbn_now_book == isbn:
+                self.__borrow_books.pop(i)
+                return
 
     @classmethod
     def get_user(cls, user_id: int):
@@ -59,32 +63,38 @@ class User:
     def choose_active_user(cls, user_id) -> None:
         cls.__now_select_user = user_id
 
+    def has_arrears_book(self, user):
+        for (isbn, start_borrow_day) in self.__borrow_books:
+            if date.date.get_now_date() - start_borrow_day > user.max_borrow_days:
+                return True
+        return False
+
 
 class Student(User):
     @staticmethod
-    def get_max_borrow_days(self) -> int:
+    def max_borrow_days(self) -> int:
         return 14
 
     @staticmethod
-    def get_max_count_books(self) -> int:
+    def max_count_books(self) -> int:
         return 3
 
 
 class Guest(User):
     @staticmethod
-    def get_max_borrow_days(self) -> int:
+    def max_borrow_days(self) -> int:
         return 7
 
     @staticmethod
-    def get_max_count_books(self) -> int:
+    def max_count_books(self) -> int:
         return 1
 
 
 class Faculty(User):
     @staticmethod
-    def get_max_borrow_days(self) -> int:
+    def max_borrow_days(self) -> int:
         return 30
 
     @staticmethod
-    def get_max_count_books(self) -> int:
+    def max_count_books(self) -> int:
         return 10

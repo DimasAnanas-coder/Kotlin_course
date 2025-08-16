@@ -30,18 +30,27 @@ def user_menu_text():
             user_type = 'faculty'
         else:
             user_type = 'guest'
-        user_short_info = f'ID: {user_id} - {user_type}'
+
         if user_id == select_user_id:
-            user_short_info = f'<{user_short_info}>'
+            user_type_selected = user_type
+        user_short_info = f'ID: {user_id} - {user_type}'
         text += f'{user_short_info}\n'
         num += 1
+
     if num == 1:
         text = 'List of user is empty. Create a new user!\n'
+    else:
+        _, email, name = User.get_user(select_user_id).get_user_info()
+        text = f'''Activity user: {name} - {user_type_selected}
+email: {email}
+ID: {select_user_id}\n\n''' + text
+
     text += '''\nChoice (0-3):
 1. Create a new user
 2. Delete a user
 3. Choose an active user
 0. Back to main menu'''
+    text = '###### User Management ######\n' + text
 
     return text
 
