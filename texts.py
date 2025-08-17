@@ -180,3 +180,19 @@ Choice (0-3):
 2. Delete Book
 3. Search
 0. Back to main menu'''
+
+add_book_step_2_isbn_used_text = '''ISBN was used already. You can add copy this book
+
+Choice (0-1):
+1. Add copy
+0. Back to library'''
+
+send_count_text = 'Send a books count'
+
+send_count_exception_text = 'Count must be a natural number'
+
+add_book_end_text = 'You have successfully added books to the library'
+
+isbn_not_found_text = 'This ISBN was not used'
+
+delete_book_end_text = 'You have successfully delete books from the library'

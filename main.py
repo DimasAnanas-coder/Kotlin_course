@@ -109,12 +109,92 @@ def library_menu_handle():
     if not request.isdigit() or not 0 <= int(request) <= 3:
         raise LibraryException(choice_exception_text)
     choice_next_step = {
-        1: ,
-        2: ,
+        1: add_book_step_1_handle,
+        2: delete_book_handle,
         3: search_book_step_1_handle,
         0: main_menu_handle
     }
     choice_next_step[int(request)]()
+
+
+def delete_book_handle():
+    while True:
+        print(send_isbn_text)
+        isbn_search = input()
+        if not is_isbn(isbn_search):
+            print(search_book_by_isbn_exception_text)
+        else:
+            for isbn in Library.get_books_list():
+                book = Library.get_book(isbn)
+                isbn_search, author, name, count = book.get_book_info()
+                if isbn == isbn_search:
+                    Library.delete_book(isbn)
+                    print(delete_book_end_text)
+                    library_menu_handle()
+                    return
+            else:
+                print(isbn_not_found_text)
+            break
+
+
+def add_book_step_1_handle():
+    while True:
+        print(send_isbn_text)
+        isbn_search = input()
+        if not is_isbn(isbn_search):
+            print(search_book_by_isbn_exception_text)
+        else:
+            break
+    for isbn in Library.get_books_list():
+        book = Library.get_book(isbn)
+        _, author, name, count = book.get_book_info()
+        if isbn == isbn_search:
+            add_book_step_2_isbn_used_handle(isbn_search)
+    else:
+        add_book_step_2_handle(isbn_search)
+        return
+
+
+def add_book_step_2_handle(isbn):
+    print(send_author_text)
+    author = input()
+    add_book_step_3_handle(isbn, author)
+
+
+def add_book_step_2_isbn_used_handle(isbn):
+    while True:
+        print(add_book_step_2_isbn_used_text)
+        request = input()
+        if not request.isdigit() or not 0 <= int(request) <= 1:
+            print(choice_exception_text)
+        else:
+            break
+    request = int(request)
+    if request == 1:
+        _, author, name, _ = Library.get_book(isbn).get_book_info()
+        add_book_step_4_handle(isbn, author, name)
+    else:
+        library_menu_handle()
+
+
+def add_book_step_3_handle(isbn, author):
+    print(send_name_text)
+    name = input()
+    add_book_step_4_handle(isbn, author, name)
+
+
+def add_book_step_4_handle(isbn, author, name):
+    while True:
+        print(send_count_text)
+        count = input()
+        if not count.isdigit() or int(count) == 0:
+            print(send_count_exception_text)
+        else:
+            break
+    book = Library(author, isbn, name, int(count))
+    Library.add_new_book(book)
+    print(add_book_end_text)
+    library_menu_handle()
 
 
 def search_book_step_1_handle():
@@ -151,8 +231,8 @@ def search_book_step_2_handle(request, text):
         elif request == 3:
             break
     searched_books: List[Library] = []
-    book: Library
-    for (isbn, book) in Library.get_books_list():
+    for isbn in Library.get_books_list():
+        book = Library.get_book(isbn)
         _, author, name, count = book.get_book_info()
         if count == 0:
             continue
@@ -169,7 +249,6 @@ def search_book_step_2_handle(request, text):
         return
     print(found_books_text(searched_books))
     library_menu_handle()
-
 
 
 def operation_with_books_menu_handle():
@@ -207,8 +286,8 @@ def borrow_book_step_1_handle():
         else:
             break
     searched_books: List[Library] = []
-    book: Library
-    for (isbn, book) in Library.get_books_list():
+    for isbn in Library.get_books_list():
+        book = Library.get_book(isbn)
         _, author, name, count = book.get_book_info()
         if count == 0:
             continue

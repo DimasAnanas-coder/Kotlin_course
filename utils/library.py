@@ -1,5 +1,5 @@
 from typing import *
-import date
+from . import date
 
 
 class Library:

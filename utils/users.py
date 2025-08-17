@@ -1,6 +1,5 @@
 from typing import *
-from abc import ABC, abstractmethod
-import date
+from . import date
 
 
 class User:
@@ -33,17 +32,17 @@ class User:
         return cls.__users_list[user_id]
 
     @property
-    def id(self):
+    def id(self) -> int:
         return self.__user_id
 
-    def get_user_info(self):
+    def get_user_info(self) -> Tuple[int, str, str]:
         return self.__user_id, self.__email, self.__name
 
     @classmethod
-    def get_users_list(cls):
+    def get_users_list(cls) -> Dict[int, Any]:
         return cls.__users_list
 
-    def get_borrow_books(self):
+    def get_borrow_books(self) -> List[Tuple[str, int]]:
         return self.__borrow_books
 
     @classmethod
@@ -68,13 +67,13 @@ class User:
     def choose_active_user(cls, user_id) -> None:
         cls.__now_select_user = user_id
 
-    def has_arrears_book(self, user):
+    def has_arrears_book(self, user) -> bool:
         for (isbn, start_borrow_day) in self.__borrow_books:
             if date.date.get_now_date() - start_borrow_day > user.max_borrow_days:
                 return True
         return False
 
-    def is_limit_of_count_books(self, user):
+    def is_limit_of_count_books(self, user) -> bool:
         return len(user.get_borrow_books()) == user.max_borrow_books
 
 
