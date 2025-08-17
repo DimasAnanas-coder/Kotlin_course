@@ -1,4 +1,5 @@
 from utils.users import *
+from utils.library import *
 
 
 def main_menu_text():
@@ -11,7 +12,8 @@ Choice (0-4):
 4. Jump to the next day
 0. Exit'''
 
-choice_exception_text = 'You need choice the one action. Only one digit, please'
+
+choice_exception_text = 'You need choice the one action. Only one number, please'
 
 
 def user_menu_text():
@@ -107,3 +109,56 @@ send_name_text = 'Send the book`s name'
 send_author_text = 'Send the book`s author'
 
 borrow_book_by_ibsn_exception_text = 'IBSN format is invalid'
+
+no_found_books_text = 'Books were not found'
+
+
+def found_books_text(books_list: List[Library]):
+    text = 'List of books for the criteria is correct:\n'
+    for num, book in enumerate(books_list):
+        isbn, author, name, _ = book.get_book_info()
+        text += f'{num + 1}. {author} - {name}. ISBN: {isbn}\n'
+    text += '\nChoose a book and send a book number from this list or send "0", if you don`t want borrow a book'
+    return text
+
+
+borrow_book_end_text = 'You have successful borrow the book'
+
+operation_with_books_menu_text = '''###### Books management ######
+
+Choice (0-3):
+1. Borrow a book
+2. Return a book
+3. Look library history
+0. Back to main menu'''
+
+
+def return_book_step_1_text():
+    user = User.get_user(User.get_users_list())
+    books_info = user.get_borrow_books()
+    if len(books_info) == 0:
+        return 'You haven`t books. Send "0" to go back'
+    text = 'List of your books:\n'
+    for i, (isbn, day) in enumerate(books_info):
+        text += f'{i + 1}. ISBN: {isbn} - day {day}\n'
+
+    text += '\nChoose a book and send a book number from this list or send "0", if you don`t want return a book'
+    return text
+
+
+return_book_end_text = 'You have successful return the book'
+
+
+def library_history_text():
+    text = '''Library history: \n\nBorrow day | Return day | isbn | user ID\n'''
+    history = Library.get_history()
+    if len(history) == 0:
+        return 'Library history is empty'
+    for (borrow_day, return_day, isbn, user_id) in history:
+        if return_day == -1:
+            return_day = '-'
+        text += f'{borrow_day}\t{return_day}\t{isbn}\t{user_id}\n'
+    text += '\n'
+    return text
+
+end_library_history_text = 'Send "0" to go back'

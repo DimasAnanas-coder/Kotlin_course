@@ -19,28 +19,41 @@ class Library:
     def borrow_new_book(self, user) -> None:
         self.__is_readable = True
         user.borrow_new_book(self.__isbn)
-        self.__history.append((date.date.get_now_date(), -1, self.__isbn, user.__user_id))
+        self.__history.append((date.date.get_now_date(), -1, self.__isbn, user.id))
 
-    def return_the_book(self, isbn, user) -> None:
-        self.__is_readable = False
-        user.return_book(isbn)
-        for i in range(len(self.__history) - 1, -1, -1):
-            (date_start, _, isbn_now_book, user_id) = self.__history
-            if isbn_now_book == isbn:
-                self.__history[i] = (date_start, date.date.get_now_date(), isbn_now_book, user_id)
+    @property
+    def isbn(self):
+        return self.__isbn
+
+    @property
+    def is_readable(self):
+        return self.__is_readable
+
+    @classmethod
+    def return_the_book(cls, book, user) -> None:
+        book.is_readable = False
+        user.return_book(book.isbn)
+        for i in range(len(cls.__history) - 1, -1, -1):
+            (date_start, _, isbn_now_book, user_id) = cls.__history
+            if isbn_now_book == book.isbn:
+                cls.__history[i] = (date_start, date.date.get_now_date(), isbn_now_book, user_id)
                 return
 
     @classmethod
     def get_book(cls, isbn: str):
         return cls.__books_list[isbn]
 
-    def get_book_info(self):
-        return self.__isbn, self.__author, self.__name
+    def get_book_info(self) -> Tuple[str, str, str, bool]:
+        return self.__isbn, self.__author, self.__name, self.__is_readable
 
     @classmethod
-    def get_books_list(cls):
+    def get_books_list(cls) -> Dict[str, Any]:
         return cls.__books_list
 
     @classmethod
     def delete_book(cls, isbn: str) -> None:
         del cls.__books_list[isbn]
+
+    @classmethod
+    def get_history(cls) -> List[Tuple[int, int, str, int]]:
+        return cls.__history

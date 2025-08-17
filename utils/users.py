@@ -1,4 +1,5 @@
 from typing import *
+from abc import ABC, abstractmethod
 import date
 
 
@@ -30,6 +31,10 @@ class User:
     @classmethod
     def get_user(cls, user_id: int):
         return cls.__users_list[user_id]
+
+    @property
+    def id(self):
+        return self.__user_id
 
     def get_user_info(self):
         return self.__user_id, self.__email, self.__name
@@ -74,30 +79,30 @@ class User:
 
 
 class Student(User):
-    @staticmethod
+    @property
     def max_borrow_days(self) -> int:
         return 14
 
-    @staticmethod
+    @property
     def max_count_books(self) -> int:
         return 3
 
 
 class Guest(User):
-    @staticmethod
+    @property
     def max_borrow_days(self) -> int:
         return 7
 
-    @staticmethod
+    @property
     def max_count_books(self) -> int:
         return 1
 
 
 class Faculty(User):
-    @staticmethod
+    @property
     def max_borrow_days(self) -> int:
         return 30
 
-    @staticmethod
+    @property
     def max_count_books(self) -> int:
         return 10
