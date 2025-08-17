@@ -94,7 +94,7 @@ limit_count_books_text = 'You can`t borrow a book from the library, because you 
 
 expired_books_text = 'You can`t borrow a book from the library, because you have expired book'
 
-start_borrow_text = '''Select the books search criteria
+start_search_text = '''Select the books search criteria
 
 Choice (0-3):
 1. ISBN
@@ -108,17 +108,26 @@ send_name_text = 'Send the book`s name'
 
 send_author_text = 'Send the book`s author'
 
-borrow_book_by_ibsn_exception_text = 'IBSN format is invalid'
+search_book_by_isbn_exception_text = 'IBSN format is invalid'
 
 no_found_books_text = 'Books were not found'
 
 
 def found_books_text(books_list: List[Library]):
-    text = 'List of books for the criteria is correct:\n'
-    for num, book in enumerate(books_list):
-        isbn, author, name, _ = book.get_book_info()
-        text += f'{num + 1}. {author} - {name}. ISBN: {isbn}\n'
-    text += '\nChoose a book and send a book number from this list or send "0", if you don`t want borrow a book'
+    text = 'Books list were found your search:\n'
+    for book in books_list:
+        isbn, author, name, count = book.get_book_info()
+        text += f'ISBN: {isbn}; {author} - {name}; count: {count} \n'
+    return text
+
+
+def found_borrow_book_text(book: Library):
+    isbn, author, name, _ = book.get_book_info()
+    text = f'''{author} - {name}. ISBN: {isbn}
+
+Choice (0-1):
+1. Borrow a book
+0. Back to Book management'''
     return text
 
 
@@ -161,4 +170,13 @@ def library_history_text():
     text += '\n'
     return text
 
+
 end_library_history_text = 'Send "0" to go back'
+
+library_menu_text = '''###### Library ######
+
+Choice (0-3):
+1. Add Book
+2. Delete Book
+3. Search
+0. Back to main menu'''

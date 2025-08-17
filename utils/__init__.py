@@ -1,3 +1,3 @@
-__all__ = ['date', 'exceptions', 'library', 'users']
+__all__ = ['date', 'exceptions', 'library', 'users', 'check_conditions']
 
 from . import *

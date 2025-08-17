@@ -2,6 +2,7 @@ from texts import *
 from utils.exceptions import *
 from utils.users import *
 from utils.library import *
+from utils.check_conditions import *
 from typing import *
 
 
@@ -103,7 +104,72 @@ def choose_active_user_handle():
 
 
 def library_menu_handle():
-    pass
+    print(library_menu_text)
+    request = input()
+    if not request.isdigit() or not 0 <= int(request) <= 3:
+        raise LibraryException(choice_exception_text)
+    choice_next_step = {
+        1: ,
+        2: ,
+        3: search_book_step_1_handle,
+        0: main_menu_handle
+    }
+    choice_next_step[int(request)]()
+
+
+def search_book_step_1_handle():
+    while True:
+        print(start_search_text)
+        request = input()
+        if not request.isdigit() or not 0 <= int(request) <= 3:
+            print(choice_exception_text)
+        else:
+            break
+    choice_text = {
+        1: send_isbn_text,
+        2: send_name_text,
+        3: send_author_text
+    }
+    request = int(request)
+    if request == 0:
+        operation_with_books_menu_handle()
+        return
+    search_book_step_2_handle(request, choice_text[request])
+
+
+def search_book_step_2_handle(request, text):
+    while True:
+        print(text)
+        criteria = input()
+        if request == 1:
+            if not is_isbn(criteria):
+                print(search_book_by_isbn_exception_text)
+            else:
+                break
+        elif request == 2:
+            break
+        elif request == 3:
+            break
+    searched_books: List[Library] = []
+    book: Library
+    for (isbn, book) in Library.get_books_list():
+        _, author, name, count = book.get_book_info()
+        if count == 0:
+            continue
+        conditions = (
+            request == 1 and isbn == criteria,
+            request == 2 and name == criteria,
+            request == 3 and author == criteria
+        )
+        if any(conditions):
+            searched_books.append(book)
+    if len(searched_books) == 0:
+        print(no_found_books_text)
+        search_book_step_1_handle()
+        return
+    print(found_books_text(searched_books))
+    library_menu_handle()
+
 
 
 def operation_with_books_menu_handle():
@@ -133,68 +199,41 @@ def start_borrow_book_handle():
 
 
 def borrow_book_step_1_handle():
-    print(start_borrow_text)
-    request = input()
-    if not request.isdigit() or not 0 <= int(request) <= 3:
-        raise BorrowException(choice_exception_text)
-    choice_text = {
-        1: send_isbn_text,
-        2: send_name_text,
-        3: send_author_text
-    }
-    request = int(request)
-    if request == 0:
-        operation_with_books_menu_handle()
-        return
-    borrow_book_step_2_handle(request, choice_text[request])
-
-
-def borrow_book_step_2_handle(request, text):
     while True:
-        print(text)
-        criteria = input()
-        if request == 1:
-            if not (len(criteria) == 17 and '--' not in criteria
-                    and criteria[0] != '-' and criteria[-1] != '-'):
-                print(borrow_book_by_ibsn_exception_text)
-            else:
-                break
-        elif request == 2:
-            break
-        elif request == 3:
+        print(send_isbn_text)
+        isbn_search = input()
+        if not is_isbn(isbn_search):
+            print(search_book_by_isbn_exception_text)
+        else:
             break
     searched_books: List[Library] = []
     book: Library
     for (isbn, book) in Library.get_books_list():
-        _, author, name, is_readable = book.get_book_info()
-        if not is_readable:
+        _, author, name, count = book.get_book_info()
+        if count == 0:
             continue
-        conditions = (
-            request == 1 and isbn == criteria,
-            request == 2 and name == criteria,
-            request == 3 and author == criteria
-        )
-        if any(conditions):
+        if isbn == isbn_search:
             searched_books.append(book)
+            break
     if len(searched_books) == 0:
         print(no_found_books_text)
         borrow_book_step_1_handle()
         return
-    borrow_book_step_3_handle(searched_books)
+    borrow_book_step_2_handle(searched_books[0])
 
 
-def borrow_book_step_3_handle(searched_books):
+def borrow_book_step_2_handle(book):
     while True:
-        print(found_books_text(searched_books))
+        print(found_borrow_book_text(book))
         num = input()
-        if not num.isdigit() or not 0 <= int(num) <= len(searched_books):
+        if not num.isdigit() or not 0 <= int(num) <= 1:
             print(choice_exception_text)
         else:
             break
     num = int(num)
     if num != 0:
         user = User.get_user(User.get_select_user())
-        searched_books[num - 1].borrow_new_book(user)
+        book.borrow_new_book(user)
         print(borrow_book_end_text)
     operation_with_books_menu_handle()
 
