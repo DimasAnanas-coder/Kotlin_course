@@ -80,7 +80,6 @@ class User:
     def choose_active_user(cls, user_id) -> None:
         cls.__now_select_user = user_id
 
-
     def has_arrears_book(self, user) -> bool:
         for (isbn, start_borrow_day) in self.__borrow_books:
             if date.date.get_now_date() - start_borrow_day > user.max_borrow_days:
@@ -88,7 +87,7 @@ class User:
         return False
 
     def is_limit_of_count_books(self, user) -> bool:
-        return len(user.get_borrow_books()) == user.max_borrow_books
+        return len(user.get_borrow_books()) == user.max_count_books
 
 
 class Student(User):

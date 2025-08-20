@@ -4,8 +4,7 @@ from . import date
 
 class Library:
     __books_list: Dict[str, Any] = dict()  # ISBN, Book
-
-    __history: List[Tuple[int, int, str, int]] = 0  # Day get, Day take, ISBN, user ID
+    __history: List[Tuple[int, int, str, int]] = []  # Day get, Day take, ISBN, user ID
 
     def __init__(self, author: str, isbn: str, name: str, count: int) -> None:
         self.__author: str = author
@@ -43,10 +42,10 @@ class Library:
 
     @classmethod
     def return_the_book(cls, book, user) -> None:
-        book.add_count(1)
+        book.add_old_book(1)
         user.return_book(book.isbn)
         for i in range(len(cls.__history) - 1, -1, -1):
-            (date_start, _, isbn_now_book, user_id) = cls.__history
+            (date_start, _, isbn_now_book, user_id) = cls.__history[i]
             if isbn_now_book == book.isbn:
                 cls.__history[i] = (date_start, date.date.get_now_date(), isbn_now_book, user_id)
                 return

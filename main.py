@@ -27,7 +27,7 @@ def user_menu_handle():
     if not request.isdigit() or not 0 <= int(request) <= 3:
         raise UserMenuException(choice_exception_text)
     choice_next_step = {
-        1: create_user_handle,
+        1: create_user_step_1_handle,
         2: delete_user_handler,
         3: choose_active_user_handle,
         0: main_menu_handle
@@ -35,31 +35,45 @@ def user_menu_handle():
     choice_next_step[int(request)]()
 
 
-def create_user_handle():
+def create_user_step_1_handle():
     print(create_user_step_1_text)
     request = input()
-    if not request.isdigit() or not 1 <= int(request) <= 3:
+    if not request.isdigit() or not 0 <= int(request) <= 3:
         raise UserMenuException(choice_exception_text)
+    if request == '0':
+        raise UserMenuException(end_action_text)
     choice_user_type = {
         1: Guest,
         2: Student,
         3: Faculty
     }
     user_type = choice_user_type[int(request)]
+    create_user_step_2_handle(user_type)
 
+
+def create_user_step_2_handle(user_type):
     while True:
         print(create_user_step_2_text)
         name = input()
         if ' ' in name:
             print(create_user_step_2_format_exception_text)
+        elif name == '0':
+            create_user_step_1_handle()
+            return
         else:
             break
+    create_user_step_3_handle(user_type, name)
 
+
+def create_user_step_3_handle(user_type, name):
     while True:
         print(create_user_step_3_text)
         email = input()
         if ' ' in email:
             print(create_user_step_3_space_exception_text)
+        elif email == '0':
+            create_user_step_2_handle(user_type)
+            return
         elif '@' not in email:
             print(create_user_step_3_format_exception_text)
         elif User.is_email_used(email):
@@ -79,8 +93,10 @@ def delete_user_handler():
     while True:
         print(delete_user_step_1_text)
         request = input()
-        if not request.isdigit() or int(request) < 1:
+        if not request.isdigit():
             print(delete_user_step_1_format_exception_text)
+        elif request == '0':
+            raise UserMenuException(end_action_text)
         elif int(request) not in User.get_users_list_visible():
             print(delete_user_step_1_no_user_exception_text)
         else:
@@ -93,8 +109,10 @@ def choose_active_user_handle():
     while True:
         print(choose_user_step_1_text)
         request = input()
-        if not request.isdigit() or int(request) < 1:
+        if not request.isdigit():
             print(choose_user_step_1_format_exception_text)
+        elif request == '0':
+            raise UserMenuException(end_action_text)
         elif int(request) not in User.get_users_list_visible():
             print(choose_user_step_1_no_user_exception_text)
         else:
@@ -121,7 +139,9 @@ def delete_book_handle():
     while True:
         print(send_isbn_text)
         isbn_search = input()
-        if not is_isbn(isbn_search):
+        if isbn_search == '0':
+            raise LibraryException(end_action_text)
+        elif not is_isbn(isbn_search):
             print(search_book_by_isbn_exception_text)
         else:
             for isbn in Library.get_books_list():
@@ -139,7 +159,9 @@ def add_book_step_1_handle():
     while True:
         print(send_isbn_text)
         isbn_search = input()
-        if not is_isbn(isbn_search):
+        if isbn_search == '0':
+            raise LibraryException(end_action_text)
+        elif not is_isbn(isbn_search):
             print(search_book_by_isbn_exception_text)
         else:
             break
@@ -154,6 +176,9 @@ def add_book_step_1_handle():
 def add_book_step_2_handle(isbn):
     print(send_author_text)
     author = input()
+    if author == '0':
+        add_book_step_1_handle()
+        return
     add_book_step_3_handle(isbn, author)
 
 
@@ -176,6 +201,9 @@ def add_book_step_2_isbn_used_handle(isbn):
 def add_book_step_3_handle(isbn, author):
     print(send_name_text)
     name = input()
+    if name == '0':
+        add_book_step_2_handle(isbn)
+        return
     add_book_step_4_handle(isbn, author, name)
 
 
@@ -183,8 +211,10 @@ def add_book_step_4_handle(isbn, author, name, is_old=False):
     while True:
         print(send_count_text)
         count = input()
-        if not count.isdigit() or int(count) == 0:
+        if not count.isdigit():
             print(send_count_exception_text)
+        elif count == '0':
+            add_book_step_3_handle(isbn, author)
         else:
             break
     if is_old:
@@ -209,10 +239,10 @@ def search_book_step_1_handle():
         2: send_name_text,
         3: send_author_text
     }
-    request = int(request)
-    if request == 0:
-        operation_with_books_menu_handle()
+    if request == '0':
+        library_menu_handle()
         return
+    request = int(request)
     search_book_step_2_handle(request, choice_text[request])
 
 
@@ -220,6 +250,9 @@ def search_book_step_2_handle(request, text):
     while True:
         print(text)
         criteria = input()
+        if criteria == '0':
+            search_book_step_1_handle()
+            return
         if request == 1:
             if not is_isbn(criteria):
                 print(search_book_by_isbn_exception_text)
@@ -279,7 +312,9 @@ def borrow_book_step_1_handle():
     while True:
         print(send_isbn_text)
         isbn_search = input()
-        if not is_isbn(isbn_search):
+        if isbn_search == '0':
+            raise BorrowException(end_action_text)
+        elif not is_isbn(isbn_search):
             print(search_book_by_isbn_exception_text)
         else:
             break
@@ -306,8 +341,7 @@ def borrow_book_step_2_handle(book):
             print(choice_exception_text)
         else:
             break
-    num = int(num)
-    if num != 0:
+    if num != '0':
         user = User.get_user(User.get_select_user())
         book.borrow_new_book(user)
         print(borrow_book_end_text)
@@ -327,8 +361,7 @@ def return_book_handle():
             print(choice_exception_text)
         else:
             break
-    num = int(num)
-    if num != 0:
+    if num != '0':
         isbn = borrow_books[-1][0]
         book = Library.get_book(isbn)
         Library.return_the_book(book, user)

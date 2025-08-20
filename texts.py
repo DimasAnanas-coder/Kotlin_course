@@ -55,16 +55,17 @@ ID: {select_user_id}\n\n''' + text
     return text
 
 
-create_user_step_1_text = '''Choice (1-3):
+create_user_step_1_text = '''Choice (0-3):
 1. Guest
 2. Student
-3. Faculty'''
+3. Faculty
+0. Back to User Management'''
 
-create_user_step_2_text = 'Enter your name'
+create_user_step_2_text = 'Enter your name. Send "0" to go back'
 
 create_user_step_2_format_exception_text = 'Your name must consist of one word'
 
-create_user_step_3_text = 'Enter your email'
+create_user_step_3_text = 'Enter your email. Send "0" to go back'
 
 create_user_step_3_space_exception_text = 'Your email must consist of one word'
 
@@ -74,16 +75,16 @@ create_user_step_3_old_account_exception_text = 'An account with this email has 
 
 
 def create_user_step_4_text(user_id):
-    return f'You have successful created a new account (ID: {user_id})'
+    return f'You have successful created a new account (ID: {user_id})\n'
 
 
-delete_user_step_1_text = 'Enter the user ID you want to delete'
+delete_user_step_1_text = 'Enter the user ID you want to delete. Send "0" to go back'
 
 delete_user_step_1_no_user_exception_text = 'A user with this ID was not found'
 
 delete_user_step_1_format_exception_text = 'The user ID must be a natural number'
 
-choose_user_step_1_text = 'Enter the user ID you want to delete'
+choose_user_step_1_text = 'Enter the user ID you want to choose. Send "0" to go back'
 
 choose_user_step_1_no_user_exception_text = 'A user with this ID was not found'
 
@@ -105,13 +106,13 @@ Choice (0-3):
 3. Author
 0. Back to books management menu'''
 
-send_isbn_text = 'Send the book`s ISBN in format: 978-3-16-148412-0 (13 digits)'
+send_isbn_text = 'Send the book`s ISBN in format: 978-3-16-148412-0 (13 digits). Send "0" to go back'
 
-send_name_text = 'Send the book`s name'
+send_name_text = 'Send the book`s name. Send "0" to go back'
 
-send_author_text = 'Send the book`s author'
+send_author_text = 'Send the book`s author. Send "0" to go back'
 
-search_book_by_isbn_exception_text = 'IBSN format is invalid'
+search_book_by_isbn_exception_text = 'ISBN format is invalid'
 
 no_found_books_text = 'Books were not found'
 
@@ -124,7 +125,7 @@ def found_books_text(books_list: List[Library]):
 
 
 def found_borrow_book_text(book: Library):
-    text = f'''{book.author} - {book.name}. ISBN: {book.isbn}
+    text = f'''{book.author} - {book.name}. Count in library: {book.count}
 
 Choice (0-1):
 1. Borrow a book
@@ -132,7 +133,7 @@ Choice (0-1):
     return text
 
 
-borrow_book_end_text = 'You have successful borrow the book'
+borrow_book_end_text = 'You have successful borrow the book\n'
 
 operation_with_books_menu_text = '''###### Books management ######
 
@@ -156,19 +157,18 @@ def return_book_step_1_text():
     return text
 
 
-return_book_end_text = 'You have successful return the book'
+return_book_end_text = 'You have successful return the book\n'
 
 
 def library_history_text():
-    text = '''Library history: \n\nBorrow day | Return day | isbn | user ID\n'''
+    text = '''Library history: \n\nBorrow day | Return day |       isbn       | user ID\n'''
     history = Library.get_history()
     if len(history) == 0:
         return 'Library history is empty'
     for (borrow_day, return_day, isbn, user_id) in history:
         if return_day == -1:
             return_day = '-'
-        text += f'{borrow_day}\t{return_day}\t{isbn}\t{user_id}\n'
-    text += '\n'
+        text += f'{borrow_day}{" " * 11}{return_day}{" " * 13}{isbn}\t{user_id}\n'
     return text
 
 
@@ -188,12 +188,14 @@ Choice (0-1):
 1. Add copy
 0. Back to library'''
 
-send_count_text = 'Send a books count'
+send_count_text = 'Send a books count. Send "0" to go back'
 
 send_count_exception_text = 'Count must be a natural number'
 
-add_book_end_text = 'You have successfully added books to the library'
+add_book_end_text = 'You have successfully added books to the library\n'
 
 isbn_not_found_text = 'This ISBN was not used'
 
-delete_book_end_text = 'You have successfully delete books from the library'
+delete_book_end_text = 'You have successfully delete books from the library\n'
+
+end_action_text = 'You have ended the action\n'
