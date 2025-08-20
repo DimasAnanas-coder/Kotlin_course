@@ -362,7 +362,7 @@ def return_book_handle():
         else:
             break
     if num != '0':
-        isbn = borrow_books[-1][0]
+        isbn = borrow_books[int(num) - 1][0]
         book = Library.get_book(isbn)
         Library.return_the_book(book, user)
         print(return_book_end_text)
