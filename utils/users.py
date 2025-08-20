@@ -4,6 +4,7 @@ from . import date
 
 class User:
     __users_list: Dict[int, Any] = dict()
+    __users_list_visible: Dict[int, Any] = dict()
     __now_select_user: int = 0
 
     def __init__(self, user_id: int, email: str, name: str) -> None:
@@ -15,6 +16,7 @@ class User:
     @classmethod
     def add_new_user(cls, user):
         cls.__users_list[user.__user_id] = user
+        cls.__users_list_visible[user.__user_id] = user
         cls.__now_select_user = user.__user_id
 
     def borrow_new_book(self, isbn: str) -> None:
@@ -35,11 +37,20 @@ class User:
     def id(self) -> int:
         return self.__user_id
 
-    def get_user_info(self) -> Tuple[int, str, str]:
-        return self.__user_id, self.__email, self.__name
+    @property
+    def email(self) -> str:
+        return self.__email
+
+    @property
+    def name(self) -> str:
+        return self.__name
 
     @classmethod
-    def get_users_list(cls) -> Dict[int, Any]:
+    def get_users_list_visible(cls) -> Dict[int, Any]:
+        return cls.__users_list_visible
+
+    @classmethod
+    def get_all_users_list(cls) -> Dict[int, Any]:
         return cls.__users_list
 
     def get_borrow_books(self) -> List[Tuple[str, int]]:
@@ -53,19 +64,22 @@ class User:
     def is_email_used(cls, email: str) -> bool:
         users_list = cls.__users_list
         for user_id in users_list:
-            if email == users_list[user_id].get_user_info()[1]:
+            if email == users_list[user_id].email:
                 return True
         return False
 
     @classmethod
     def delete_user(cls, user_id: int) -> None:
+        del cls.__users_list_visible[user_id]
         if cls.__now_select_user == user_id:
-            cls.__now_select_user -= 1
-        del cls.__users_list[user_id]
+            for select_user_id in cls.__users_list_visible:
+                cls.__now_select_user = select_user_id
+                break
 
     @classmethod
     def choose_active_user(cls, user_id) -> None:
         cls.__now_select_user = user_id
+
 
     def has_arrears_book(self, user) -> bool:
         for (isbn, start_borrow_day) in self.__borrow_books:

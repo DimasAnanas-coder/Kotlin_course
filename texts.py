@@ -17,7 +17,7 @@ choice_exception_text = 'You need choice the one action. Only one number, please
 
 
 def user_menu_text():
-    users_list = User.get_users_list()
+    users_list = User.get_users_list_visible()
     text = 'List of users:\n'
     num = 1
     select_user_id = User.get_select_user()
@@ -39,7 +39,8 @@ def user_menu_text():
     if num == 1:
         text = 'List of user is empty. Create a new user!\n'
     else:
-        _, email, name = User.get_user(select_user_id).get_user_info()
+        select_user = User.get_user(select_user_id)
+        email, name = select_user.email, select_user.name
         text = f'''Activity user: {name} - {user_type_selected}
 email: {email}
 ID: {select_user_id}\n\n''' + text
@@ -88,7 +89,9 @@ choose_user_step_1_no_user_exception_text = 'A user with this ID was not found'
 
 choose_user_step_1_format_exception_text = 'The user ID must be a natural number'
 
-user_not_found_text = 'You can`t borrow a book from the library, because you didn`t create a user'
+user_not_found_in_borrow_text = 'You can`t borrow a book from the library, because you didn`t create a user'
+
+user_not_found_in_return_text = 'You can`t return a book from the library, because you didn`t create a user'
 
 limit_count_books_text = 'You can`t borrow a book from the library, because you have many books'
 
@@ -116,14 +119,12 @@ no_found_books_text = 'Books were not found'
 def found_books_text(books_list: List[Library]):
     text = 'Books list were found your search:\n'
     for book in books_list:
-        isbn, author, name, count = book.get_book_info()
-        text += f'ISBN: {isbn}; {author} - {name}; count: {count} \n'
+        text += f'ISBN: {book.isbn}; {book.author} - {book.name}; count: {book.count} \n'
     return text
 
 
 def found_borrow_book_text(book: Library):
-    isbn, author, name, _ = book.get_book_info()
-    text = f'''{author} - {name}. ISBN: {isbn}
+    text = f'''{book.author} - {book.name}. ISBN: {book.isbn}
 
 Choice (0-1):
 1. Borrow a book
@@ -143,7 +144,7 @@ Choice (0-3):
 
 
 def return_book_step_1_text():
-    user = User.get_user(User.get_users_list())
+    user = User.get_user(User.get_select_user())
     books_info = user.get_borrow_books()
     if len(books_info) == 0:
         return 'You haven`t books. Send "0" to go back'

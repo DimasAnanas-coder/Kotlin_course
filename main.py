@@ -67,7 +67,7 @@ def create_user_handle():
         else:
             break
 
-    user_id = len(User.get_users_list()) + 1
+    user_id = len(User.get_all_users_list()) + 1
     user = user_type(user_id, email, name)
     User.add_new_user(user)
 
@@ -81,7 +81,7 @@ def delete_user_handler():
         request = input()
         if not request.isdigit() or int(request) < 1:
             print(delete_user_step_1_format_exception_text)
-        elif int(request) > len(User.get_users_list()):
+        elif int(request) not in User.get_users_list_visible():
             print(delete_user_step_1_no_user_exception_text)
         else:
             break
@@ -95,7 +95,7 @@ def choose_active_user_handle():
         request = input()
         if not request.isdigit() or int(request) < 1:
             print(choose_user_step_1_format_exception_text)
-        elif int(request) > len(User.get_users_list()):
+        elif int(request) not in User.get_users_list_visible():
             print(choose_user_step_1_no_user_exception_text)
         else:
             break
@@ -125,16 +125,14 @@ def delete_book_handle():
             print(search_book_by_isbn_exception_text)
         else:
             for isbn in Library.get_books_list():
-                book = Library.get_book(isbn)
-                isbn_search, author, name, count = book.get_book_info()
                 if isbn == isbn_search:
                     Library.delete_book(isbn)
                     print(delete_book_end_text)
-                    library_menu_handle()
-                    return
+                    break
             else:
                 print(isbn_not_found_text)
             break
+    library_menu_handle()
 
 
 def add_book_step_1_handle():
@@ -146,8 +144,6 @@ def add_book_step_1_handle():
         else:
             break
     for isbn in Library.get_books_list():
-        book = Library.get_book(isbn)
-        _, author, name, count = book.get_book_info()
         if isbn == isbn_search:
             add_book_step_2_isbn_used_handle(isbn_search)
     else:
@@ -171,8 +167,8 @@ def add_book_step_2_isbn_used_handle(isbn):
             break
     request = int(request)
     if request == 1:
-        _, author, name, _ = Library.get_book(isbn).get_book_info()
-        add_book_step_4_handle(isbn, author, name)
+        book = Library.get_book(isbn)
+        add_book_step_4_handle(isbn, book.author, book.name, is_old=True)
     else:
         library_menu_handle()
 
@@ -183,7 +179,7 @@ def add_book_step_3_handle(isbn, author):
     add_book_step_4_handle(isbn, author, name)
 
 
-def add_book_step_4_handle(isbn, author, name):
+def add_book_step_4_handle(isbn, author, name, is_old=False):
     while True:
         print(send_count_text)
         count = input()
@@ -191,8 +187,11 @@ def add_book_step_4_handle(isbn, author, name):
             print(send_count_exception_text)
         else:
             break
-    book = Library(author, isbn, name, int(count))
-    Library.add_new_book(book)
+    if is_old:
+        Library.get_book(isbn).add_old_book(int(count))
+    else:
+        book = Library(author, isbn, name, int(count))
+        Library.add_new_book(book)
     print(add_book_end_text)
     library_menu_handle()
 
@@ -233,13 +232,12 @@ def search_book_step_2_handle(request, text):
     searched_books: List[Library] = []
     for isbn in Library.get_books_list():
         book = Library.get_book(isbn)
-        _, author, name, count = book.get_book_info()
-        if count == 0:
+        if book.count == 0:
             continue
         conditions = (
             request == 1 and isbn == criteria,
-            request == 2 and name == criteria,
-            request == 3 and author == criteria
+            request == 2 and book.name == criteria,
+            request == 3 and book.author == criteria
         )
         if any(conditions):
             searched_books.append(book)
@@ -268,7 +266,7 @@ def operation_with_books_menu_handle():
 def start_borrow_book_handle():
     choose_user = User.get_select_user()
     if choose_user == 0:
-        raise BorrowException(user_not_found_text)
+        raise BorrowException(user_not_found_in_borrow_text)
     user = User.get_user(choose_user)
     if user.is_limit_of_count_books(user):
         raise BorrowException(limit_count_books_text)
@@ -288,8 +286,7 @@ def borrow_book_step_1_handle():
     searched_books: List[Library] = []
     for isbn in Library.get_books_list():
         book = Library.get_book(isbn)
-        _, author, name, count = book.get_book_info()
-        if count == 0:
+        if book.count == 0:
             continue
         if isbn == isbn_search:
             searched_books.append(book)
@@ -318,6 +315,9 @@ def borrow_book_step_2_handle(book):
 
 
 def return_book_handle():
+    if User.get_select_user() == 0:
+        raise BorrowException(user_not_found_in_return_text)
+
     user = User.get_user(User.get_select_user())
     borrow_books = user.get_borrow_books()
     while True:

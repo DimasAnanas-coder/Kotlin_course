@@ -4,6 +4,7 @@ from . import date
 
 class Library:
     __books_list: Dict[str, Any] = dict()  # ISBN, Book
+
     __history: List[Tuple[int, int, str, int]] = 0  # Day get, Day take, ISBN, user ID
 
     def __init__(self, author: str, isbn: str, name: str, count: int) -> None:
@@ -29,6 +30,14 @@ class Library:
         return self.__isbn
 
     @property
+    def author(self) -> str:
+        return self.__author
+
+    @property
+    def name(self) -> str:
+        return self.__name
+
+    @property
     def count(self) -> int:
         return self.__count
 
@@ -45,9 +54,6 @@ class Library:
     @classmethod
     def get_book(cls, isbn: str):
         return cls.__books_list[isbn]
-
-    def get_book_info(self) -> Tuple[str, str, str, int]:
-        return self.__isbn, self.__author, self.__name, self.__count
 
     @classmethod
     def get_books_list(cls) -> Dict[str, Any]:
