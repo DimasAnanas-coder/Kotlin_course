@@ -1,6 +1,5 @@
 from utils.users import *
 from utils.library import *
-from typing import *
 
 
 def main_menu_text():
@@ -98,6 +97,10 @@ choose_user_step_1_format_exception_text = 'The user ID must be a natural number
 user_not_found_in_borrow_text = 'You can`t borrow a book from the library, because you didn`t create a user'
 
 user_not_found_in_return_text = 'You can`t return a book from the library, because you didn`t create a user'
+
+user_not_found_in_select_user_text = 'You can`t select a user, because you didn`t create a user'
+
+book_not_found_in_delete_text = 'You can`t delete a book, because you didn`t create a book'
 
 limit_count_books_text = 'You can`t borrow a book from the library, because you have many books'
 
@@ -198,8 +201,6 @@ Choice (0-4):
 3. Search
 4. Look all books
 0. Back to main menu'''
-
-look_all_books_text = ''
 
 add_book_step_2_isbn_used_text = '''ISBN was used already. You can add copy this book
 

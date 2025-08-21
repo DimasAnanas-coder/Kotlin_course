@@ -1,6 +1,7 @@
 from typing import *
-from . import date
 from abc import abstractmethod
+
+from .date import *
 
 
 class User:
@@ -31,7 +32,7 @@ class User:
         cls.__now_select_user = user.__user_id
 
     def borrow_new_book(self, isbn: str) -> None:
-        self.__borrow_books.append((isbn, date.date.get_now_date()))
+        self.__borrow_books.append((isbn, date.get_now_date()))
 
     def return_book(self, isbn: str) -> None:
         for i in range(len(self.__borrow_books) - 1, -1, -1):
@@ -93,7 +94,7 @@ class User:
 
     def has_arrears_book(self, user) -> bool:
         for (isbn, start_borrow_day) in self.__borrow_books:
-            if date.date.get_now_date() - start_borrow_day > user.max_borrow_days:
+            if date.get_now_date() - start_borrow_day > user.max_borrow_days:
                 return True
         return False
 

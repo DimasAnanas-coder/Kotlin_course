@@ -1,9 +1,9 @@
 from texts import *
+
 from utils.exceptions import *
 from utils.users import *
 from utils.library import *
 from utils.check_conditions import *
-from typing import *
 
 
 def main_menu_handle():
@@ -90,6 +90,8 @@ def create_user_step_3_handle(user_type, name):
 
 
 def delete_user_handler():
+    if User.get_select_user() == 0:
+        raise UserMenuException(user_not_found_in_select_user_text)
     while True:
         print(delete_user_step_1_text)
         request = input()
@@ -106,13 +108,15 @@ def delete_user_handler():
 
 
 def choose_active_user_handle():
+    if User.get_select_user() == 0:
+        raise UserMenuException(user_not_found_in_select_user_text)
     while True:
         print(choose_user_step_1_text)
         request = input()
-        if not request.isdigit():
-            print(choose_user_step_1_format_exception_text)
-        elif request == '0':
+        if request == '0':
             raise UserMenuException(end_action_text)
+        elif not request.isdigit():
+            print(choose_user_step_1_format_exception_text)
         elif int(request) not in User.get_users_list_visible():
             print(choose_user_step_1_no_user_exception_text)
         else:
@@ -137,7 +141,7 @@ def library_menu_handle():
 
 
 def look_all_history():
-    print()
+    print(look_all_books_text())
     while True:
         print(end_library_history_text)
         num = input()
@@ -149,6 +153,8 @@ def look_all_history():
 
 
 def delete_book_handle():
+    if len(Library.get_books_list()) == 0:
+        raise LibraryException(book_not_found_in_delete_text)
     while True:
         print(send_isbn_text)
         isbn_search = input()
