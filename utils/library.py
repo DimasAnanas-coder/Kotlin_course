@@ -3,7 +3,7 @@ from . import date
 
 
 class Library:
-    __books_list: Dict[str, Any] = dict()  # ISBN, Book
+    __books_list: Dict[str, Any] = dict()            # ISBN, Book
     __history: List[Tuple[int, int, str, int]] = []  # Day get, Day take, ISBN, user ID
 
     def __init__(self, author: str, isbn: str, name: str, count: int) -> None:

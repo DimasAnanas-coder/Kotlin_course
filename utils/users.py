@@ -1,10 +1,11 @@
 from typing import *
 from . import date
+from abc import abstractmethod
 
 
 class User:
-    __users_list: Dict[int, Any] = dict()
-    __users_list_visible: Dict[int, Any] = dict()
+    __users_list: Dict[int, Any] = dict()  # User ID, User
+    __users_list_visible: Dict[int, Any] = dict()  # User ID, User
     __now_select_user: int = 0
 
     def __init__(self, user_id: int, email: str, name: str) -> None:
@@ -12,6 +13,16 @@ class User:
         self.__email: str = email
         self.__name: str = name
         self.__borrow_books: List[Tuple[str, int]] = []  # ISBN, day start borrow
+
+    @property
+    @abstractmethod
+    def max_borrow_days(self) -> int:
+        pass
+
+    @property
+    @abstractmethod
+    def max_count_books(self) -> int:
+        pass
 
     @classmethod
     def add_new_user(cls, user):

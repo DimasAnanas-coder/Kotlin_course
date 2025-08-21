@@ -1,5 +1,6 @@
 from utils.users import *
 from utils.library import *
+from typing import *
 
 
 def main_menu_text():
@@ -39,11 +40,13 @@ def user_menu_text():
     if num == 1:
         text = 'List of user is empty. Create a new user!\n'
     else:
-        select_user = User.get_user(select_user_id)
-        email, name = select_user.email, select_user.name
-        text = f'''Activity user: {name} - {user_type_selected}
-email: {email}
-ID: {select_user_id}\n\n''' + text
+        select_user: User = User.get_user(select_user_id)
+        text = f'''Activity user: 
+ID: {select_user_id}
+{select_user.name} - {user_type_selected}
+email: {select_user.email}
+Max borrow days:{select_user.max_borrow_days}
+Max count books:{select_user.max_count_books}\n\n''' + text
 
     text += '''\nChoice (0-3):
 1. Create a new user
@@ -68,6 +71,8 @@ create_user_step_2_format_exception_text = 'Your name must consist of one word'
 create_user_step_3_text = 'Enter your email. Send "0" to go back'
 
 create_user_step_3_space_exception_text = 'Your email must consist of one word'
+
+create_user_step_3_russian_exception_text = 'Your email can`t consist of russian characters'
 
 create_user_step_3_format_exception_text = 'Email need to have the symbol "@"'
 
@@ -139,7 +144,7 @@ operation_with_books_menu_text = '''###### Books management ######
 
 Choice (0-3):
 1. Borrow a book
-2. Return a book
+2. Look my books -> Return a book
 3. Look library history
 0. Back to main menu'''
 
@@ -161,14 +166,25 @@ return_book_end_text = 'You have successful return the book\n'
 
 
 def library_history_text():
-    text = '''Library history: \n\nBorrow day | Return day |       isbn       | user ID\n'''
+    text = '''Library history: \n\nBorrow day | Return day |       ISBN       | user ID\n'''
     history = Library.get_history()
     if len(history) == 0:
         return 'Library history is empty'
     for (borrow_day, return_day, isbn, user_id) in history:
         if return_day == -1:
             return_day = '-'
-        text += f'{borrow_day}{" " * 11}{return_day}{" " * 13}{isbn}\t{user_id}\n'
+        text += f'{borrow_day}{" " * 16}{return_day}{" " * 8}{isbn}{" " * 3}{user_id}\n'
+    return text
+
+
+def look_all_books_text():
+    text = '''Books: \n\n      ISBN       | Author | name | count\n'''
+    books = Library.get_books_list()
+    if len(books) == 0:
+        return 'Library is empty'
+    for isbn in books:
+        book = books[isbn]
+        text += f'{isbn} {book.author} {book.name} {book.count}\n'
     return text
 
 
@@ -176,11 +192,14 @@ end_library_history_text = 'Send "0" to go back'
 
 library_menu_text = '''###### Library ######
 
-Choice (0-3):
+Choice (0-4):
 1. Add Book
 2. Delete Book
 3. Search
+4. Look all books
 0. Back to main menu'''
+
+look_all_books_text = ''
 
 add_book_step_2_isbn_used_text = '''ISBN was used already. You can add copy this book
 
@@ -199,3 +218,11 @@ isbn_not_found_text = 'This ISBN was not used'
 delete_book_end_text = 'You have successfully delete books from the library\n'
 
 end_action_text = 'You have ended the action\n'
+
+before_exit_text = '''Do you want to exit this program?
+
+Choice (0-1):
+1. Back to main menu
+0. Exit'''
+
+exit_text = 'Buy'

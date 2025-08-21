@@ -55,9 +55,7 @@ def create_user_step_2_handle(user_type):
     while True:
         print(create_user_step_2_text)
         name = input()
-        if ' ' in name:
-            print(create_user_step_2_format_exception_text)
-        elif name == '0':
+        if name == '0':
             create_user_step_1_handle()
             return
         else:
@@ -68,12 +66,14 @@ def create_user_step_2_handle(user_type):
 def create_user_step_3_handle(user_type, name):
     while True:
         print(create_user_step_3_text)
-        email = input()
-        if ' ' in email:
-            print(create_user_step_3_space_exception_text)
-        elif email == '0':
+        email = input().lower()
+        if email == '0':
             create_user_step_2_handle(user_type)
             return
+        elif ' ' in email:
+            print(create_user_step_3_space_exception_text)
+        elif is_russian_email(email):
+            print(create_user_step_3_russian_exception_text)
         elif '@' not in email:
             print(create_user_step_3_format_exception_text)
         elif User.is_email_used(email):
@@ -124,15 +124,28 @@ def choose_active_user_handle():
 def library_menu_handle():
     print(library_menu_text)
     request = input()
-    if not request.isdigit() or not 0 <= int(request) <= 3:
+    if not request.isdigit() or not 0 <= int(request) <= 4:
         raise LibraryException(choice_exception_text)
     choice_next_step = {
         1: add_book_step_1_handle,
         2: delete_book_handle,
         3: search_book_step_1_handle,
+        4: look_all_history,
         0: main_menu_handle
     }
     choice_next_step[int(request)]()
+
+
+def look_all_history():
+    print()
+    while True:
+        print(end_library_history_text)
+        num = input()
+        if num != '0':
+            print(choice_exception_text)
+        else:
+            break
+    library_menu_handle()
 
 
 def delete_book_handle():
@@ -268,9 +281,9 @@ def search_book_step_2_handle(request, text):
         if book.count == 0:
             continue
         conditions = (
-            request == 1 and isbn == criteria,
-            request == 2 and book.name == criteria,
-            request == 3 and book.author == criteria
+            request == 1 and criteria == isbn,
+            request == 2 and criteria.lower() in book.name.lower(),
+            request == 3 and criteria.lower() in book.author.lower()
         )
         if any(conditions):
             searched_books.append(book)
@@ -387,7 +400,15 @@ def jump_to_the_next_day_handle():
 
 
 def exit_handle():
-    raise ExitException('Buy')
+    while True:
+        print(before_exit_text)
+        request = input()
+        if request == '0':
+            raise ExitException()
+        elif request == '1':
+            main_menu_handle()
+        else:
+            print(choice_exception_text)
 
 
 def start(func):
