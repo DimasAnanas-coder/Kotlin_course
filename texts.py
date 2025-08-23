@@ -44,8 +44,8 @@ def user_menu_text():
 ID: {select_user_id}
 {select_user.name} - {user_type_selected}
 email: {select_user.email}
-Max borrow days:{select_user.max_borrow_days}
-Max count books:{select_user.max_count_books}\n\n''' + text
+Max borrow days: {select_user.max_borrow_days}
+Max count books: {select_user.max_count_books}\n\n''' + text
 
     text += '''\nChoice (0-3):
 1. Create a new user
@@ -73,7 +73,7 @@ create_user_step_3_space_exception_text = 'Your email must consist of one word'
 
 create_user_step_3_russian_exception_text = 'Your email can`t consist of russian characters'
 
-create_user_step_3_format_exception_text = 'Email need to have the symbol "@"'
+create_user_step_3_format_exception_text = 'Email format is invalid'
 
 create_user_step_3_old_account_exception_text = 'An account with this email has already been created'
 
@@ -142,6 +142,8 @@ Choice (0-1):
 
 
 borrow_book_end_text = 'You have successful borrow the book\n'
+
+borrow_book_already_text = 'You have this book already. Please, choose another book\n'
 
 operation_with_books_menu_text = '''###### Books management ######
 
